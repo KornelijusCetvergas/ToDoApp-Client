@@ -3,9 +3,14 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --background: #101114;
+  --primary-color: #1C1D20;
+  --secondary-color: #4A4D57;
+  --accent-color: #00FFC4;
+  --text-color: #F9F9F9;
+
+  color: var(--text-color);
+  background-color: var(--background);
 
 }
 
@@ -29,7 +34,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--primary-color);
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -37,3 +42,24 @@ button {
 button:hover {
   border-color: #646cff;
 }
+
+.todo-input{
+    box-sizing: border-box;
+    padding: 12px 20px;
+    width: 100%;
+    background: none;
+    border: 2px solid var(--secondary-color);
+    border-radius: 1000px;
+    font: inherit;
+    color: var(--text-color);
+    caret-color: var(--accent-color);
+}
+
+.todo.form{
+    width: 700px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+

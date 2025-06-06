@@ -4,13 +4,18 @@ import Axios from 'axios';
 export default function Main() {
     const [todos, setTodos] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [count, setCount] = useState(0);
     const url = "http://localhost:8080/todo"
 
     const listOfTodos = todos.map((todo) => (
         <li key={todo.id}>
             <button onClick={() => toggleIsDone(todo.id)}>{todo.isDone ? "Done" : "Pending"}</button>
-            <span>{todo.description}</span>
+            <span
+                style={{
+                textDecoration: todo.isDone
+                    ? 'line-through'
+                    : 'none',
+                }}
+            >{todo.description}</span>
             <button onClick={() => deleteTodo(todo.id)}>Delete</button>
         </li>
     ))
@@ -21,7 +26,7 @@ export default function Main() {
                 const response = await Axios.delete(url + "/" + id)
                 //console.log(response);
                 if (response.status >= 200 && response.status < 300) {
-                    setCount(prev => prev + 1);
+                    setTodos(todos.filter(todo => todo.id !== id))
                 } else {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -41,7 +46,12 @@ export default function Main() {
             try {
                 const response = await Axios.patch(url + "/" + id + "/toggle")
                 if (response.status >= 200 && response.status < 300) {
-                    setCount(prev => prev + 1);
+                    setTodos( prev => prev.map( todo => {
+                        if ( todo.id == id) {
+                            return {...todo, isDone: !todo.isDone}
+                        }
+                        return todo;
+                    }))
                 }
             } catch (error) {
                 console.error('Error updating data:', error);
@@ -66,7 +76,7 @@ export default function Main() {
         };
 
         fetchData();
-    }, [count]);
+    }, []);
     
     
 
@@ -80,7 +90,7 @@ export default function Main() {
             try {
                 const response = await Axios.post(url , { description })
                 if (response.status >= 200 && response.status < 300) {
-                    setCount(prev => prev + 1);
+                    setTodos( prev => [...prev, response.data] )
                 }
             } catch (error) {
                 console.error("Error creating todo: ", error);
@@ -93,13 +103,14 @@ export default function Main() {
     
     return (
         <main>
-            <form onSubmit={createTodo} className="create-todo">
+            <form onSubmit={createTodo} className="todo-form">
                 <input 
+                    className="todo-input"
                     type="text"
                     placeholder="Do the dishes"
                     name="todo"
                 />
-                <button>Add Todo</button>
+                <button className='todo-add'>Add</button>
             </form>
             {loading ? (
                 <p>Loading...</p>
