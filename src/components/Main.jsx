@@ -94,10 +94,8 @@ export default function Main() {
         deleteAllDone();
     }
 
-    function createTodo(event) {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        const description = formData.get("todo");
+    function createTodo(formData) {
+        const description = formData.get("task");
         //console.log("Added a new Todo: " + description);
 
         const handleCreate = async () => {
@@ -117,12 +115,12 @@ export default function Main() {
     
     return (
         <main>
-            <form onSubmit={createTodo} className="todo-form">
+            <form action={createTodo} className="todo-form">
                 <input 
                     className="todo-input"
                     type="text"
                     placeholder="Do the dishes"
-                    name="todo"
+                    name="task"
                 />
                 <button className='todo-add'>Add</button>
             </form>
