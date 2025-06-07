@@ -78,7 +78,21 @@ export default function Main() {
         fetchData();
     }, []);
     
-    
+    function handleDeleteAllDone() {
+
+        const deleteAllDone = async () => {
+            try {
+                const response = await Axios.delete(url + "/alldone")
+                if (response.status >= 200 && response.status < 300) {
+                    setTodos(todos.filter(todo => !todo.isDone));
+                }
+            } catch (error) {
+                console.error("Error deleting all done todos: ", error);
+            }
+        }
+        
+        deleteAllDone();
+    }
 
     function createTodo(event) {
         event.preventDefault();
@@ -112,13 +126,21 @@ export default function Main() {
                 />
                 <button className='todo-add'>Add</button>
             </form>
+
             {loading ? (
                 <p>Loading...</p>
             )  : (
                 <ul>
                     {listOfTodos}
-                </ul>
+                </ul> 
             )}
+
+            {todos.length === 0 ? (
+                <></>
+            ) : (
+                <button onClick={handleDeleteAllDone}>Delete all completed tasks</button>
+            )}
+
         </main>
     )
 }
