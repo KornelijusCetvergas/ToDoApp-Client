@@ -6,19 +6,21 @@ export default function Main() {
     const [loading, setLoading] = useState(true);
     const url = "http://localhost:8080/todo"
 
-    const listOfTodos = todos.map((todo) => (
-        <li key={todo.id}>
-            <button onClick={() => toggleIsDone(todo.id)}>{todo.isDone ? "Done" : "Pending"}</button>
-            <span
-                style={{
-                textDecoration: todo.isDone
-                    ? 'line-through'
-                    : 'none',
-                }}
-            >{todo.description}</span>
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
-        </li>
-    ))
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await Axios.get(url + "/all");
+                setTodos(response.data);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                //alert("There was an issue with loading the Todo list, please try again later.");
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     function deleteTodo(id) {
         const handleDelete = async () => {
@@ -62,22 +64,6 @@ export default function Main() {
         handlePatch();
     }
     
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await Axios.get(url + "/all");
-                setTodos(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                //alert("There was an issue with loading the Todo list, please try again later.");
-                setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
-    
     function handleDeleteAllDone() {
 
         const deleteAllDone = async () => {
@@ -94,7 +80,7 @@ export default function Main() {
         deleteAllDone();
     }
 
-    function createTodo(formData) {
+    function handleCreateTodo(formData) {
         const description = formData.get("task");
         //console.log("Added a new Todo: " + description);
 
@@ -113,9 +99,23 @@ export default function Main() {
         handleCreate()
     };
     
+    const listOfTodos = todos.map((todo) => (
+        <li key={todo.id}>
+            <button onClick={() => toggleIsDone(todo.id)}>{todo.isDone ? "Done" : "Pending"}</button>
+            <span
+                style={{
+                textDecoration: todo.isDone
+                    ? 'line-through'
+                    : 'none',
+                }}
+            >{todo.description}</span>
+            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+        </li>
+    ))
+
     return (
         <main>
-            <form action={createTodo} className="todo-form">
+            <form action={handleCreateTodo} className="todo-form">
                 <input 
                     className="todo-input"
                     type="text"
